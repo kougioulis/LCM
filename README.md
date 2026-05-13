@@ -18,7 +18,7 @@
 
 Reproducibility experiments for the paper *"Large Causal Models for Temporal Causal Discovery* by Kougioulis et al, CoRR 2026.
 
-**NOTE:** For the codebase of the same-titled dissertation (defended at November 12th at the University of Crete by the first and main author), see https://github.com/kougioulis/large-causal-models. 
+**NOTE:** For the codebase of the same-titled dissertation (defended at November 12th 2025 at the University of Crete by the first and main author), see https://github.com/kougioulis/large-causal-models.
 
 ---
 
