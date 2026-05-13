@@ -16,7 +16,9 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://github.com/kougioulis/large-causal-models/blob/main/LICENSE)
 </div>
 
-Reproducibility experiments for the paper *"Large Causal Models for Temporal Causal Discovery*.
+Reproducibility experiments for the paper *"Large Causal Models for Temporal Causal Discovery* by Kougioulis et al, CoRR 2026.
+
+**NOTE:** For the codebase of the same-titled dissertation (defended at November 12th at the University of Crete by the first and main author), see https://github.com/kougioulis/large-causal-models. 
 
 ---
 
