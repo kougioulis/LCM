@@ -5,14 +5,20 @@
 </p>
 
 <div align="center">
-[![CodeFactor](https://www.codefactor.io/repository/github/kougioulis/LCM/badge)](https://www.codefactor.io/repository/github/kougioulis/LCM)
-[![arXiv](https://img.shields.io/badge/arXiv-2602.18662-b31b1b.svg?style=flat)](https://arxiv.org/abs/2602.18662)
-![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)
-![PyTorch](https://img.shields.io/badge/PyTorch-black?logo=pytorch)
-![NumPy](https://img.shields.io/badge/-NumPy-013243?\&logo=NumPy)
-![Scikit-learn](https://img.shields.io/badge/Scikit--learn-20232A?\&logoColor=61DAFB)
-![Pandas](https://img.shields.io/badge/-Pandas-333333?style=flat\&logo=pandas)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://github.com/kougioulis/large-causal-models/blob/main/LICENSE)
+  <a href="https://www.codefactor.io/repository/github/kougioulis/lcm">
+    <img src="https://www.codefactor.io/repository/github/kougioulis/lcm/badge" alt="CodeFactor">
+  </a>
+  <a href="https://arxiv.org/abs/2602.18662">
+    <img src="https://img.shields.io/badge/arXiv-2602.18662-b31b1b.svg?style=flat" alt="arXiv">
+  </a>
+  <img src="https://img.shields.io/badge/Python-3.10-blue?logo=python" alt="Python">
+  <img src="https://img.shields.io/badge/PyTorch-black?logo=pytorch" alt="PyTorch">
+  <img src="https://img.shields.io/badge/-NumPy-013243?logo=NumPy" alt="NumPy">
+  <img src="https://img.shields.io/badge/Scikit--learn-20232A?logo=scikitlearn&logoColor=61DAFB" alt="Scikit-learn">
+  <img src="https://img.shields.io/badge/-Pandas-333333?style=flat&logo=pandas" alt="Pandas">
+  <a href="https://github.com/kougioulis/large-causal-models/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License">
+  </a>
 </div>
 
 Reproducibility experiments for the paper *"Large Causal Models for Temporal Causal Discovery* by Kougioulis et al, CoRR 2026.
