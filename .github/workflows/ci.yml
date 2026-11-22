@@ -20,7 +20,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install torch==2.5.0 --index-url https://download.pytorch.org/whl/cpu
-          pip install "numpy<2" pandas einops matplotlib torchmetrics "pytorch-lightning==2.0.8" pytest ruff
+          pip install "numpy<2" pandas einops matplotlib torchmetrics "pytorch-lightning==2.0.8" huggingface_hub safetensors pytest ruff
 
       - name: Ruff lint
         run: ruff check lcm_pytorch/modules lcm_pytorch/utils/utils.py tests

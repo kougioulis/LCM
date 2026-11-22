@@ -1,10 +1,20 @@
 import pytorch_lightning as pl
 import torch
+from huggingface_hub import PyTorchModelHubMixin
 
 from lcm_pytorch.models.full_informer.model import Informer as model
 
 
-class LCMModule(pl.LightningModule):
+class LCMModule(
+    pl.LightningModule,
+    PyTorchModelHubMixin,
+    library_name="lcm-pytorch",
+    repo_url="https://github.com/kougioulis/LCM",
+    paper_url="https://arxiv.org/abs/2602.18662",
+    license="apache-2.0",
+    tags=["causal-discovery", "causality", "large-causal-models",
+          "causal-machine-learning", "time-series", "pytorch"],
+):
     def __init__(
         self,
         n_vars: int = 12,
