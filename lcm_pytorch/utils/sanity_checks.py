@@ -4,10 +4,11 @@ import numpy as np
 import pandas as pd
 import torch
 
-from utils.transformation_utils import regular_order_pd
+from lcm_pytorch.utils.transformation_utils import regular_order_pd
 
 
-def print_sum_of_edges(adj_pd: pd.DataFrame, adj_lagged: Union[torch.Tensor, np.ndarray], assertive: bool=False) -> None:
+def print_sum_of_edges(adj_pd: pd.DataFrame, adj_lagged: Union[torch.Tensor, np.ndarray],
+                       assertive: bool=False) -> None:
     """ 
     Print and compare the total number of edges in both representations. The effects are only considered by the current time-step. 
     They should always amount to the same number for each node, in both cases. Assumes that the order of the nodes in the 
@@ -33,7 +34,8 @@ def print_sum_of_edges(adj_pd: pd.DataFrame, adj_lagged: Union[torch.Tensor, np.
     print(f"(lagged) {lagged_sum} - vs - {pd_sum} (pd) \n")
 
 
-def print_sum_of_causes(adj_pd: pd.DataFrame, adj_lagged: Union[torch.Tensor, np.ndarray], assertive: bool=False) -> None:
+def print_sum_of_causes(adj_pd: pd.DataFrame, adj_lagged: Union[torch.Tensor, np.ndarray],
+                        assertive: bool=False) -> None:
     """ 
     Print and compare the total number of causes for each effect. The effects are only considered by the current time-step. 
     They should always amount to the same number for each node, in both representations. Assumes that the order of the nodes in the 
@@ -60,7 +62,8 @@ def print_sum_of_causes(adj_pd: pd.DataFrame, adj_lagged: Union[torch.Tensor, np
         print(f"- {col} -> (lagged) {lagged_causes} vs {pd_causes} (full) \n")
 
 
-def print_sum_of_causes_fmri(edgelist: pd.DataFrame, adj_pd: pd.DataFrame, adj_lagged: Union[torch.Tensor, np.ndarray], assertive: bool=False) -> None:
+def print_sum_of_causes_fmri(edgelist: pd.DataFrame, adj_pd: pd.DataFrame,
+                             adj_lagged: Union[torch.Tensor, np.ndarray], assertive: bool=False) -> None:
     """ 
     Print and compare the total number of causes for each effect. The effects are only considered by the current time-step. 
     They should always amount to the same number for each node, in both representations. Assumes that the order of the nodes in the 
@@ -79,7 +82,6 @@ def print_sum_of_causes_fmri(edgelist: pd.DataFrame, adj_pd: pd.DataFrame, adj_l
     print("Edgelist vs Lagged")
     for idx, node in enumerate(sorted(edgelist['effect'].unique())):
         lagged_causes = adj_lagged[idx, :, :].sum().int().item()
-        # pd_causes = adj_pd[col].sum()
         edgelist_causes = edgelist[edgelist['effect']==node].shape[0]
 
         if assertive:
@@ -92,13 +94,12 @@ def print_sum_of_causes_fmri(edgelist: pd.DataFrame, adj_pd: pd.DataFrame, adj_l
     regular_order_nodes = regular_order_pd(adj_pd=adj_pd)
     adj_pd = adj_pd.loc[regular_order_nodes, regular_order_nodes] 
     for idx, node in enumerate(list(adj_pd.columns)[:len(edgelist['effect'].unique())]):
-        # display(adj_pd[node])
         pd_causes = adj_pd[node].sum()
         edgelist_causes = edgelist[edgelist['effect']==idx].shape[0]
 
         if assertive:
-            assert lagged_causes==edgelist_causes, f"ValueError: the number of causes for node {node} of the lagged representation ({pd_causes}) \
-                is not equal tothe number of causes of the PD representation ({edgelist_causes})"
+            assert pd_causes==edgelist_causes, f"ValueError: the number of causes for node {node} of the PD representation ({pd_causes}) \
+                is not equal to the number of causes of the PD representation ({edgelist_causes})"
 
         print(f"- {node}: (edgelist) {edgelist_causes} vs {pd_causes} (pd)")
     print()

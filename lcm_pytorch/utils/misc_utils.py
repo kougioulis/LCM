@@ -16,7 +16,6 @@ from itertools import combinations
 from scipy.stats import wilcoxon
 from sklearn.metrics import roc_curve
 from collections import defaultdict
-import warnings
 
 from IPython.display import display
 
@@ -25,10 +24,11 @@ from lcm_pytorch.utils.pcmci_utils import tensor_to_pcmci_res_modified
 from lcm_pytorch.utils.dynotears_utils import run_dynotears_with_bootstrap
 from lcm_pytorch.utils.cdml_utils import y_from_cdml_to_lagged_adj
 from lcm_pytorch.utils.transformation_utils import from_fmri_to_lagged_adj
-from lcm_pytorch.utils.utils import check_non_stationarity, to_stationary_with_finite_differences, lagged_batch_crosscorrelation, \
-    run_varlingam_with_bootstrap
+from lcm_pytorch.utils.utils import (
+    check_non_stationarity, to_stationary_with_finite_differences,
+    lagged_batch_crosscorrelation, run_varlingam_with_bootstrap
+)
 
-from lcm_pytorch.utils.plotting_utils import plot_comparison_fancy
 
 def timing(f: callable) -> callable:
     """
@@ -93,7 +93,8 @@ def fmri_to_adjacency_tensor(test_fmri: torch.Tensor, label_fmri: torch.Tensor, 
     return Y_fmri
 
 
-def get_fmri_pairs(timeseries_files: list[str], ground_truth_files: list[str], verbose=False) -> list[tuple[str, str]]:
+def get_fmri_pairs(timeseries_files: list[str], ground_truth_files: list[str],
+                   verbose=False) -> list[tuple[str, str]]:
     """
     Helper to extract time-series and ground truth causal graph pairs of lists of time-series and causal graphs.
     Uses regular expressions to create a 1-1 correspondence between the two.
@@ -155,7 +156,7 @@ def count_params(model: torch.nn.Module, pretty: bool=False) -> int:
         return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
-def get_aligned_aucs(results_a, results_b):
+def get_aligned_aucs(results_a, results_b) -> list:
     """
     Align per-sample AUCs from two models.
 
@@ -174,7 +175,7 @@ def get_aligned_aucs(results_a, results_b):
     return scores_a, scores_b
 
 
-def aggregate_across_runs(per_sample_results):
+def aggregate_across_runs(per_sample_results) -> dict:
     aggregated = {}
     for model, pairs in per_sample_results.items():
         tmp = defaultdict(list)
@@ -349,7 +350,7 @@ def perform_wilcoxon_test(per_sample_results: dict, metric: str = "AUC",
     return pd.DataFrame(rows)
 
 
-def load_full_dataset(base_path: Path, split: str):
+def load_full_dataset(base_path: Path, split: str) -> list[tuple]:
     """
     Loads a single dataset file into memory.
 
@@ -375,7 +376,7 @@ def load_full_dataset(base_path: Path, split: str):
     return data  # returns list of (X,Y)
 
 
-def load_sharded_dataset(base_path: Path, split: str): 
+def load_sharded_dataset(base_path: Path, split: str) -> list: 
     """
     Loads all torch shards (e.g., test_merged_shard0.pt, test_merged_shard1.pt etc)
     and yields them one by one to avoid loading everything in memory.
@@ -766,11 +767,14 @@ def run_evaluation_experiments(models: dict,
 
                             # Check dimensions to make sure they do not exceed the model's MAX_LAG & MAX_VAR
                             assert X_cpd.shape[1]<=MAX_VAR_, \
-                                f"ValueError: input time-series have {X_cpd.shape[1]} variables, while the current model supports at most {MAX_VAR_}"
+                                (f"ValueError: input time-series have {X_cpd.shape[1]} variables, "
+                                 f"while the current model supports at most {MAX_VAR_}.")
                             assert Y_cpd.shape[1]<=MAX_VAR_, \
-                                f"ValueError: input adjacency matrix has {Y_cpd.shape[1]} nodes, while the current model supports at most {MAX_VAR_}"
+                                (f"ValueError: input adjacency matrix has {Y_cpd.shape[1]} nodes, "
+                                 f"while the current model supports at most {MAX_VAR_}.")
                             assert Y_cpd.shape[2]<=MAX_LAG_, \
-                                f"ValueError: input adjacency matrix has {Y_cpd.shape[2]}, while the current model supports at most {MAX_LAG_}"
+                                (f"ValueError: input adjacency matrix has {Y_cpd.shape[2]} lags, "
+                                 f"while the current model supports at most {MAX_LAG_}.")
 
                             # Padding
                             VAR_DIF = MAX_VAR_ - X_cpd.shape[1]
@@ -793,9 +797,11 @@ def run_evaluation_experiments(models: dict,
                             if (X_cpd.shape[0]>500):
                                 X_cpd = X_cpd[:500]
                                 if ("LCM" in model_name) or (model_name=="CP_trf"):
-                                    pred = torch.sigmoid(M((X_cpd.unsqueeze(0), lagged_batch_crosscorrelation(X_cpd.unsqueeze(0), 3)))[0])
+                                    pred = torch.sigmoid(M((X_cpd.unsqueeze(0),
+                                                            lagged_batch_crosscorrelation(X_cpd.unsqueeze(0), 3)))[0])
                                 else:
-                                    pred = torch.sigmoid(M((X_cpd.unsqueeze(0), lagged_batch_crosscorrelation(X_cpd.unsqueeze(0), 3))))
+                                    pred = torch.sigmoid(M((X_cpd.unsqueeze(0),
+                                                            lagged_batch_crosscorrelation(X_cpd.unsqueeze(0), 3))))
                                 pred = pred.unsqueeze(0)
 
                                 #bs_preds = []
@@ -805,7 +811,8 @@ def run_evaluation_experiments(models: dict,
 
                                 #if ("LCM" in model_name) or (model_name=="CP_trf"):
                                 #    with torch.no_grad():
-                                #        bs_preds = [torch.sigmoid(M((bs.unsqueeze(0), lagged_batch_crosscorrelation(bs.unsqueeze(0), 3)))) for bs in batches]
+                                #       bs_preds = [torch.sigmoid(M((bs.unsqueeze(0),
+                                #                                    lagged_batch_crosscorrelation(bs.unsqueeze(0), 3)))) for bs in batches]
                                 #else:
                                 #    with torch.no_grad():
                                 #        bs_preds = [torch.sigmoid(M(bs.unsqueeze(0))) for bs in batches]
@@ -815,7 +822,8 @@ def run_evaluation_experiments(models: dict,
                             else:
                                 if ("LCM" in model_name) or (model_name=="CP_trf"):    
                                     with torch.no_grad():
-                                        pred = torch.sigmoid(M((X_cpd.unsqueeze(0), lagged_batch_crosscorrelation(X_cpd.unsqueeze(0), 3))))
+                                        pred = torch.sigmoid(M((X_cpd.unsqueeze(0),
+                                                                lagged_batch_crosscorrelation(X_cpd.unsqueeze(0), 3))))
                                 else:
                                     with torch.no_grad():
                                         pred = torch.sigmoid(M(X_cpd.unsqueeze(0)))
@@ -865,7 +873,8 @@ def run_evaluation_experiments(models: dict,
             std = flat.std()
             return mu, std
 
-        # NOTE: Standard errors are computed across all datasets and seeds, while in the thesis text & code computed across seeds only for each method 
+        # NOTE: Standard errors are computed across all datasets and seeds, while in the thesis
+        # text & code computed across seeds only for each method 
         means_ses = {k: mean_std_allruns(v) for k, v in run_metrics.items()}
 
         results_df.loc[len(results_df), :] = [
@@ -953,6 +962,7 @@ def threshold_by_density(pred: torch.Tensor, target_density: float) -> tuple:
 
     return binarized, thresh
 
+
 def threshold_by_auc(y_true: np.ndarray, y_score: np.ndarray, bin_thresh=0.05) -> float:
     """
     Determines the optimal threshold for a set of predicted scores (y_score) that maximizes the Area Under the Curve (AUC)
@@ -988,6 +998,7 @@ def threshold_by_auc(y_true: np.ndarray, y_score: np.ndarray, bin_thresh=0.05) -
     print(f"best threshold: {best_thresh}, best AUC: {best_auc}")
 
     return best_thresh
+
 
 def right_shift(arr: np.ndarray, shift_by: int=1) -> np.ndarray: # function to create time lagged causal relationships
     """

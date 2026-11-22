@@ -1,4 +1,3 @@
-
 import numpy as np
 import pandas as pd
 import torch
@@ -43,14 +42,15 @@ def tensor_to_pcmci_res_modified(sample: torch.tensor, c_test: str, max_tau: int
 
     q_matrix = pcmci.get_corrected_pvalues(
         p_matrix=results["p_matrix"], fdr_method="fdr_bh"
-    ) # returns the corrected p-values using the Benjamini-Hochberg method, including contemporaneous edges with shape `(num_vars, num_vars, max_tau +1)`
+    ) # Benjamini-Hochberg corrected p-values, incl. contemporaneous edges, shape `(num_vars, num_vars, max_tau + 1)`
 
     q_matrix = np.swapaxes(np.flip(q_matrix[:, :, 1:], 2), 0, 1)
 
     return q_matrix
 
 
-def run_inv_pcmci(sample: pd.DataFrame, c_test=None, max_tau: int=1, fdr_method: str="fdr_bh", invert: bool=True, rnd: int=3, threshold: float=0.05) -> np.array:
+def run_inv_pcmci(sample: pd.DataFrame, c_test=None, max_tau: int=1, fdr_method: str="fdr_bh",
+                  invert: bool=True, rnd: int=3, threshold: float=0.05) -> torch.Tensor:
     """
     Converts an fMRI datasample to appropriate dataframe for PCMCI and then runs the PCMCI algorithm.
 
@@ -87,7 +87,7 @@ def run_inv_pcmci(sample: pd.DataFrame, c_test=None, max_tau: int=1, fdr_method:
     q_matrix = pcmci.get_corrected_pvalues( # returns corrected p-values
         p_matrix=results["p_matrix"], fdr_method=fdr_method
     )
-    out = q_matrix[:, :, 1:] # exclude contamporaneous edges
+    out = q_matrix[:, :, 1:] # exclude contemporaneous edges
 
     # Select the edges with low p-values, zero-out the edges with high-p-values
     out[out < threshold] = 1
@@ -100,7 +100,9 @@ def run_inv_pcmci(sample: pd.DataFrame, c_test=None, max_tau: int=1, fdr_method:
     
     return out
 
-def run_inv_pcmciplus(sample: pd.DataFrame, c_test=None, max_tau: int=1, fdr_method: str="fdr_bh", invert: bool=True, rnd: int=3, threshold: float=0.05) -> np.array:
+
+def run_inv_pcmciplus(sample: pd.DataFrame, c_test=None, max_tau: int=1, fdr_method: str="fdr_bh",
+                      invert: bool=True, rnd: int=3, threshold: float=0.05) -> torch.Tensor:
     """
     Converts a datasample to an appropriate dataframe for PCMCI+ and then runs the PCMCI+ algorithm.
 
@@ -135,9 +137,9 @@ def run_inv_pcmciplus(sample: pd.DataFrame, c_test=None, max_tau: int=1, fdr_met
     pcmci.verbosity = 0
     results = pcmci.run_pcmciplus(tau_min=0, tau_max=max_tau, pc_alpha=None)
     q_matrix = pcmci.get_corrected_pvalues(
-        p_matrix=results["p_matrix"], fdr_method="fdr_bh", exclude_contemporaneous=True # excluding cont. edges as PCMCI+ accouts for that
+        p_matrix=results["p_matrix"], fdr_method="fdr_bh", exclude_contemporaneous=True # excluding cont. edges as PCMCI+ accounts for that
     )         
-    out = q_matrix[:, :, 1:] # exclude contamporaneous edges
+    out = q_matrix[:, :, 1:] # exclude contemporaneous edges
 
     # Select the edges with low p-values, zero-out the edges with high-p-values
     out[out < threshold] = 1
@@ -186,7 +188,7 @@ def run_pcmci_on_sample(sample: torch.Tensor, cond_test: str, max_lag: int=1) ->
 
 
 @timing
-def run_pcmci_on_dataset(dataset, cond_test: str = "ParCorr", max_lag: int = 3):
+def run_pcmci_on_dataset(dataset, cond_test: str = "ParCorr", max_lag: int = 3) -> tuple[np.ndarray, np.ndarray]:
     """
     Apply PCMCI to an entire dataset.
 
@@ -217,7 +219,7 @@ def run_pcmci_on_dataset(dataset, cond_test: str = "ParCorr", max_lag: int = 3):
     return np.stack(results, axis=0), np.stack(labels, axis=0)
 
 
-def apply_pcmci_to_dataloader(dataloader, test_type="GPDC"):
+def apply_pcmci_to_dataloader(dataloader, test_type: str="GPDC") -> tuple[torch.Tensor, torch.Tensor]:
     """
     Apply PCMCI to a dataloader containing time-series batches.
 
@@ -242,7 +244,7 @@ def apply_pcmci_to_dataloader(dataloader, test_type="GPDC"):
     return torch.Tensor(np.concatenate(all_preds)), torch.concat(all_labels)
 
 
-def evaluate_pcmci_direction_accuracy(data):
+def evaluate_pcmci_direction_accuracy(data) -> float:
     """
     Evaluate directionality accuracy of PCMCI between two variables.
 
@@ -264,7 +266,7 @@ def evaluate_pcmci_direction_accuracy(data):
     return direction_correct.item() / len(results)
 
 
-def compute_pcmci_roc_without_diagonal(dataloader, max_lag=1, num_vars=15):
+def compute_pcmci_roc_without_diagonal(dataloader, max_lag: int=1, num_vars: int=15) -> tuple:
     """
     Compute ROC/AUROC after masking diagonal self-dependencies.
 
