@@ -22,6 +22,8 @@ dependencies = [
     "einops",
     "torchmetrics",
     "pytorch-lightning==2.0.8",
+    "huggingface_hub",
+    "safetensors",
 ]
 
 [project.optional-dependencies]
