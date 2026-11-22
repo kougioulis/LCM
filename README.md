@@ -11,6 +11,10 @@
     <img src="https://www.codefactor.io/repository/github/kougioulis/lcm/badge" alt="CodeFactor" /></a> 
   <a href="https://arxiv.org/abs/2602.18662">
     <img src="https://img.shields.io/badge/arXiv-2602.18662-b31b1b.svg?style=flat" alt="arXiv" /></a>
+  <a href="https://link.springer.com/chapter/10.1007/978-3-032-37676-3_24">
+    <img src="https://img.shields.io/badge/ECML-2026-blue" alt="ECML 26" /></a>
+  <a href="https://huggingface.co/papers/2602.18662">
+    <img src="https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Models-yellow" alt="HuggingFace" /></a>
   <img src="https://img.shields.io/badge/Python-3.10-blue?logo=python" alt="Python" />
   <img src="https://img.shields.io/badge/PyTorch-black?logo=pytorch" alt="PyTorch" />
   <img src="https://img.shields.io/badge/-NumPy-013243?logo=NumPy" alt="NumPy" />
@@ -100,7 +104,27 @@ Presented results (in `CSV` format) are available under `outputs/`.
 
 ## ✨ Pretrained Models
 
-Due to GitHub size limitations, pretrained checkpoints are hosted externally on Google Drive. Provided models handle up to $V_{\max}=12$ variables, maximum lag $\ell_{\max}=3$ and $L=500$ timesteps.
+Provided models handle up to $V_{\max}=12$ variables, maximum lag $\ell_{\max}=3$ and $L=500$ timesteps.
+
+### 🤗 HuggingFace
+
+LCMs are also available on the Hugging Face Hub in `safetensors` format (weights only), about 4 times smaller than the `.ckpt` checkpoints below. Load them directly with `LCMModule.from_pretrained("nkougioulis/LCM-2.5M")`.
+
+| Model     | Parameters | Link |
+| --------- | ---------- | ---- |
+| LCM-2.5M (small) | 2.5M  | [nkougioulis/LCM-2.5M](https://huggingface.co/nkougioulis/LCM-2.5M) |
+| LCM-9.4M (base)  | 9.4M  | [nkougioulis/LCM-9.4M](https://huggingface.co/nkougioulis/LCM-9.4M) |
+| LCM-12.2M        | 12.2M | [nkougioulis/LCM-12.2M](https://huggingface.co/nkougioulis/LCM-12.2M) |
+| LCM-24M (large)  | 24M   | [nkougioulis/LCM-24M](https://huggingface.co/nkougioulis/LCM-24M) |
+
+### Google Drive
+
+The original PyTorch `.ckpt` Lightning checkpoints (including training state) are also available, hosted on Google Drive. Load them with `LCMModule.load_from_checkpoint`:
+
+```python
+model_path = Path("/path/to/pretrained/checkpoints")  # adjust as needed
+model = LCMModule.load_from_checkpoint(model_path / "LCM_2.5M.ckpt")
+```
 
 | Model     | Parameters | Link                                                                                              |
 | --------- | ---------- | ------------------------------------------------------------------------------------------------- |
@@ -135,9 +159,11 @@ import torch
 
 from lcm_pytorch.modules.lcm_module import LCMModule
 
-model_path = Path("/path/to/pretrained/checkpoints")  # adjust as needed
+# 1. Load model from the Hugging Face Hub
+#model = LCMModule.from_pretrained("nkougioulis/LCM-2.5M")
 
-# Load model
+# Or, 2. from a downloaded Lightning checkpoint:
+model_path = Path("/path/to/pretrained/checkpoints")  # adjust as needed
 model = LCMModule.load_from_checkpoint(model_path / "LCM_2.5M.ckpt")
 
 device = "cpu"
