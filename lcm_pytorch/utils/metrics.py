@@ -9,18 +9,20 @@ def custom_binary_metrics(
         A: Union[torch.Tensor, np.ndarray],
         verbose: bool=True, 
         threshold: float=0.05
-):
-    """ 
-    Computes the AUC, TPR, FPR, TNR and FNR on the inferred lagged adjacency tensor.
+) -> tuple:
+    """
+    Computes the TPR, FPR, TNR, FNR and AUC on the inferred lagged adjacency tensor.
     Adjusted from https://github.com/Gideon-Stein/CausalPretraining/tree/main.
 
     Args:
         pred (torch.Tensor or np.ndarray) : The predicted temporal adjacency matrix (should NOT be thresholded) of shape `(n, n, l_max)`
         A (torch.Tensor or np.ndarray) : The ground truth temporal adjacency matrix of shape `(n, n, l_max)` 
         verbose (bool) : Whether to print or not the results (verbose logging)
-        threshold (float) : The threshold used for binary convertion, before the calculation of assistive binary metrics. Default is `0.05`. 
+        threshold (float) : Threshold for binarizing both `pred` and `A` before computing TPR, FPR, TNR and FNR.
+            AUC uses the raw `pred` scores. Default is `0.05`.
 
-    Returns (tuple): The TPR, FPR, TNR, FNR and AUC scores
+    Returns:
+        tuple: `(tpr, fpr, tnr, fnr, auc)` in that order.
     """
     if isinstance(pred, np.ndarray):
         pred = torch.from_numpy(pred)
@@ -30,7 +32,7 @@ def custom_binary_metrics(
     pred = pred.cpu()
     A = A.cpu()
 
-    A_bin = (A >= 0.05).int()
+    A_bin = (A >= threshold).int()
     pred_bin = (pred >= threshold).int()
 
     # Compute AUC before thresholding
@@ -85,7 +87,8 @@ def calc_roc_curve(binary: Union[torch.Tensor, np.ndarray], A: Union[torch.Tenso
     return roc_out, auroc_out
 
 
-def SHD(target: Union[torch.Tensor, np.ndarray], pred: Union[torch.Tensor, np.ndarray], double_for_anticausal: bool=True, threshold: float=0.05, normalize: bool=False):
+def SHD(target: Union[torch.Tensor, np.ndarray], pred: Union[torch.Tensor, np.ndarray],
+        double_for_anticausal: bool=True, threshold: float=0.05, normalize: bool=False) -> int:
     """
     Compute the Structural Hamming Distance (SHD) for lagged adjacency tensors (instead of static prediction tensors).
 

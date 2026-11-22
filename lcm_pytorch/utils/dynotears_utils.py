@@ -59,26 +59,6 @@ def rename_sm_nodes(pred_pd: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pred_pd (pd.DataFrame): the Pandas adjacency matrix, renamed
     """
-    #pred_pd = pred_pd.rename(
-    #    columns=dict(zip(
-    #        [col for col in pred_pd.columns],
-    #        [col.replace('_lag', '_t-') for col in pred_pd.columns] 
-    #    )),
-    #    index=dict(zip(
-    #        [col for col in pred_pd.columns],
-    #        [col.replace('_lag', '_t-') for col in pred_pd.columns] 
-    #    ))
-    #)
-    #pred_pd = pred_pd.rename(
-    #    columns=dict(zip(
-    #        [col for col in pred_pd.columns],
-    #        [col.replace('_t-0', '_t') for col in pred_pd.columns] 
-    #    )), 
-    #    index=dict(zip(
-    #        [col for col in pred_pd.columns],
-    #        [col.replace('_t-0', '_t') for col in pred_pd.columns] 
-    #    )), 
-    #)
     pred_pd = pred_pd.rename(
         columns={col: col.replace('_lag', '_t-') for col in pred_pd.columns},
         index={idx: idx.replace('_lag', '_t-') for idx in pred_pd.index}

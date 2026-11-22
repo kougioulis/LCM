@@ -143,8 +143,10 @@ def plot_structure(
     return f, ax
 
 
-def plot_lagged_adjacency_structure(lagged_adj: torch.Tensor, node_names: list=None, node_color: str='indianred', node_size: int=1200, threshold: float=0.05,
-                                    ax=None, show: bool=False, reduce: bool=True):
+def plot_lagged_adjacency_structure(lagged_adj: torch.Tensor, node_names: list=None,
+                                    node_color: str='indianred', node_size: int=1200,
+                                    threshold: float=0.05, ax=None, show: bool=False,
+                                    reduce: bool=True):
     """
     Creates a nx.DiGraph straight from the lagged adjacency structure and plots it.
 
@@ -180,7 +182,8 @@ def process_lagged_adj(
         lagged_adj: torch.Tensor, 
         threshold: float = 0.05, 
         node_names: list = None, 
-        reduce: bool = True
+        reduce: bool = True,
+        verbose: bool = False,
 ) -> list:
     """
     Processes the lagged adjacency structure and returns the corresponding `nx.DiGraph` object.
@@ -195,6 +198,8 @@ def process_lagged_adj(
             The names of the variables. If `None`, the default ones are used.
         reduce (bool):
             Whether to reduce the adjacency matrix. Default is `True`.
+        verbose (bool):
+            Whether to enable verbose logging. Default is `False`. 
 
     Returns
     -------
@@ -235,25 +240,25 @@ def process_lagged_adj(
     )
 
     # add edges
-    for i in range(lagged_adj.shape[0]):
-        for j in range(lagged_adj.shape[1]):
-            for t in range(lagged_adj.shape[2]):
-                if lagged_adj[i, j, t]==1:
-                    lag = str(n_lags-t)
-                    effect = lag_dict['0'][i]
-                    cause = lag_dict[lag][j]
-                    # print(f"{cause} -> {effect} ({lag})")
-                    G.add_edge(u_of_edge=cause, v_of_edge=effect)
+    for i, j, t in np.argwhere(lagged_adj==1): # avoid triple nesting
+        lag = str(n_lags-t)
+        effect = lag_dict['0'][i]
+        cause = lag_dict[lag][j]
+        if verbose:
+            print(f"{cause} -> {effect} ({lag})")
+        G.add_edge(u_of_edge=cause, v_of_edge=effect)
 
     # create a pandas adjacency
     adj_pd=nx.to_pandas_adjacency(G, dtype=int)
 
     # drop redundant elements
-    # if reduce:
-    node2drop = [col for col in adj_pd.columns if adj_pd.loc[:, col].sum()>0] + \
-    [col for col in adj_pd.columns if adj_pd.loc[col, :].sum()>0]
-    adj_pd = adj_pd.drop(index=[col for col in adj_pd.columns if col not in node2drop]).\
-                drop(columns=[col for col in adj_pd.columns if col not in node2drop])
+    if reduce:
+        node2drop = [col for col in adj_pd.columns if adj_pd.loc[:, col].sum()>0] + \
+        [col for col in adj_pd.columns if adj_pd.loc[col, :].sum()>0]
+        if verbose:
+            print(f"Dropping {len(node2drop)} nodes.")
+        adj_pd = adj_pd.drop(index=[col for col in adj_pd.columns if col not in node2drop]).\
+                    drop(columns=[col for col in adj_pd.columns if col not in node2drop])
   
     # find the (new) number of lags from the adjacency
     max_lag = max([int(node.split("_t-")[-1]) for node in adj_pd.columns if "_t-" in node])
