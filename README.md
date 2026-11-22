@@ -6,23 +6,20 @@
 
 <div align="center">
   <a href="https://github.com/kougioulis/LCM/actions/workflows/ci.yml">
-    <img src="https://github.com/kougioulis/LCM/actions/workflows/ci.yml/badge.svg" alt="CI">
-  </a>
+    <img src="https://github.com/kougioulis/LCM/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
   <a href="https://www.codefactor.io/repository/github/kougioulis/lcm">
-    <img src="https://www.codefactor.io/repository/github/kougioulis/lcm/badge" alt="CodeFactor">
-  </a>
+    <img src="https://www.codefactor.io/repository/github/kougioulis/lcm/badge" alt="CodeFactor" /></a> 
   <a href="https://arxiv.org/abs/2602.18662">
-    <img src="https://img.shields.io/badge/arXiv-2602.18662-b31b1b.svg?style=flat" alt="arXiv">
-  </a>
-  <img src="https://img.shields.io/badge/Python-3.10-blue?logo=python" alt="Python">
-  <img src="https://img.shields.io/badge/PyTorch-black?logo=pytorch" alt="PyTorch">
-  <img src="https://img.shields.io/badge/-NumPy-013243?logo=NumPy" alt="NumPy">
-  <img src="https://img.shields.io/badge/Scikit--learn-20232A?logo=scikitlearn&logoColor=61DAFB" alt="Scikit-learn">
-  <img src="https://img.shields.io/badge/-Pandas-333333?style=flat&logo=pandas" alt="Pandas">
-  <a href="https://github.com/kougioulis/large-causal-models/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License">
-  </a>
+    <img src="https://img.shields.io/badge/arXiv-2602.18662-b31b1b.svg?style=flat" alt="arXiv" /></a>
+  <img src="https://img.shields.io/badge/Python-3.10-blue?logo=python" alt="Python" />
+  <img src="https://img.shields.io/badge/PyTorch-black?logo=pytorch" alt="PyTorch" />
+  <img src="https://img.shields.io/badge/-NumPy-013243?logo=NumPy" alt="NumPy" />
+  <img src="https://img.shields.io/badge/Scikit--learn-20232A?logo=scikitlearn&logoColor=61DAFB" alt="Scikit-learn" />
+  <img src="https://img.shields.io/badge/-Pandas-333333?style=flat&logo=pandas" alt="Pandas" />
+<a href="https://github.com/kougioulis/LCM/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License" /></a>
+<a href="https://github.com/kougioulis/lcm/CODE_OF_CONDUCT.md"><img src="https://img.shields.io/badge/Contributor%20Covenant-3.0-4baaaa.svg" /></a>
 </div>
+
 
 Reproducibility experiments for the paper *"Large Causal Models for Temporal Causal Discovery* by Kougioulis et al, 2026.
 
@@ -194,14 +191,13 @@ if X_cpd.shape[0] < MAX_SEQ_LEN:
         torch.normal(0, 0.01, (MAX_SEQ_LEN - X_cpd.shape[0], X_cpd.shape[1]))
     ], dim=0)
 
-# Feature + lag padding
+# Feature padding
 VAR_DIF, LAG_DIF = MAX_VAR - X_cpd.shape[1], MAX_LAG - Y_cpd.shape[2]
 if VAR_DIF > 0:
     X_cpd = torch.cat([
         X_cpd,
         torch.normal(0, 0.01, (X_cpd.shape[0], VAR_DIF))
     ], dim=1)
-    Y_cpd = torch.nn.functional.pad(Y_cpd, (0, 0, 0, VAR_DIF, 0, VAR_DIF), value=0.0)
 ```
 
 ---
@@ -229,7 +225,7 @@ with torch.no_grad():
 ```python
 from lcm_pytorch.utils.metrics import custom_binary_metrics
 
-print(f"AUC: {custom_binary_metrics(pred, Y_cpd)[0]}")
+print(f"AUC: {custom_binary_metrics(pred, Y_cpd)[4]}")
 ```
 
 The model succesfully discovers all causal effects, resulting in a perfect AUC score. We can also visualize lag-wise heatmaps against the known ground truth:
@@ -350,13 +346,13 @@ We additionally provide the test sets for the experimental evaluations present i
 If you find this work useful, please cite:
 
 ```bibtex
-@article{kougioulis2026large,
-      title={Large Causal Models for Temporal Causal Discovery}, 
-      author={Nikolaos Kougioulis and Nikolaos Gkorgkolis and MingXue Wang and Bora Caglayan and Dario Simionato and Andrea Tonon and Ioannis Tsamardinos},
-      year={2026},
-      eprint={2602.18662},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2602.18662}
+@inproceedings{kougioulis2026large,
+  title={Large causal models for temporal causal discovery},
+  author={Kougioulis, Nikolaos and Gkorgkolis, Nikolaos and Wang, MingXue and Caglayan, Bora and Simionato, Dario and Tonon, Andrea and Tsamardinos, Ioannis},
+  booktitle={Joint European Conference on Machine Learning and Knowledge Discovery in Databases},
+  pages={414--429},
+  year={2026},
+  organization={Springer}
 }
+
 ```
