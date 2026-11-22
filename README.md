@@ -11,6 +11,8 @@
     <img src="https://www.codefactor.io/repository/github/kougioulis/lcm/badge" alt="CodeFactor" /></a> 
   <a href="https://arxiv.org/abs/2602.18662">
     <img src="https://img.shields.io/badge/arXiv-2602.18662-b31b1b.svg?style=flat" alt="arXiv" /></a>
+  <a href="https://link.springer.com/chapter/10.1007/978-3-032-37676-3_24">
+    <img src="https://img.shields.io/badge/ECML-2026-blue" alt="ECML 26" /></a>
   <a href="https://huggingface.co/papers/2602.18662">
     <img src="https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Models-yellow" alt="HuggingFace" /></a>
   <img src="https://img.shields.io/badge/Python-3.10-blue?logo=python" alt="Python" />
