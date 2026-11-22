@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Scikit--learn-20232A?logo=scikitlearn&logoColor=61DAFB" alt="Scikit-learn" />
   <img src="https://img.shields.io/badge/-Pandas-333333?style=flat&logo=pandas" alt="Pandas" />
 <a href="https://github.com/kougioulis/LCM/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License" /></a>
-<a href="https://github.com/kougioulis/lcm/CODE_OF_CONDUCT.md"><img src="https://img.shields.io/badge/Contributor%20Covenant-3.0-4baaaa.svg" /></a>
+<a href="https://github.com/kougioulis/LCM/blob/main/CODE_OF_CONDUCT.md"><img src="https://img.shields.io/badge/Contributor%20Covenant-3.0-4baaaa.svg" /></a>
 </div>
 
 
