@@ -70,3 +70,7 @@ logs/
 
 # Jupyter notebooks & other source files
 notebooks/dynotears_sanity.ipynb
+
+# HuggingFace-related
+scripts/export_to_hf.py
+HF_UPLOAD.md
